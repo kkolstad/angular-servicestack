@@ -112,7 +112,7 @@ This function will be executed when a `401` HTTP status code is return by a serv
 
 
 ##Links
-+ ServiceStack - http://servicestack.net/
++ Service Stack - http://servicestack.net/
 + AngularJS - http://angularjs.org/
 
 
