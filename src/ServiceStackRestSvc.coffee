@@ -18,7 +18,7 @@ module.
 
 # This module encapsulates all the functionality around making REST calls to the ServiceStack API
 module.
-	factory 'serviceStackRestClient', ['serviceStackRestConfig', '$http','$q', '$location', '$timeout', '$log', (serviceStackRestConfig, $http, $q, $location, $timeout, $log) ->
+	factory 'serviceStackRestClient', ['serviceStackRestConfig', '$http','$q', '$timeout', '$log', (serviceStackRestConfig, $http, $q, $timeout, $log) ->
 
 		# @success = true if success, false if not
 		# @statusCode = status code of the underlying REST request
