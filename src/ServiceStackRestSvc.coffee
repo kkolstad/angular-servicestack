@@ -4,15 +4,14 @@ module.
 	provider 'serviceStackRestConfig', () ->
 		# default configuration
 		restConfig = {
-			urlPrefix: "/api/",
+			urlPrefix: "",
 			maxRetries: 3,
-			maxWaitBetweenRetries: 4000,	# 4 seconds
-			unauthorizedFn: (response) -> 
-				# handle unauthorized responses here
+			maxDelayBetweenRetries: 4000,
+			unauthorizedFn: null
 		}
 
 		setRestConfig: (newConfig) ->
-			restConfig = newConfig
+			angular.extend restConfig, newConfig
 
 		$get: () ->
 			restConfig
@@ -196,7 +195,7 @@ module.
 						# handle retryable errors
 
 						# calculate the amount of time to wait, before retrying
-						sleepTime = Math.min (Math.random() * (Math.pow(4, response.collisionCount() - 1) * 100)), serviceStackRestConfig.maxWaitBetweenRetries
+						sleepTime = Math.min (Math.random() * (Math.pow(4, response.collisionCount() - 1) * 100)), serviceStackRestConfig.maxDelayBetweenRetries
 
 						#$log.log "500 error, retry #{response.collisionCount()} after waiting for #{sleepTime} ms"
 

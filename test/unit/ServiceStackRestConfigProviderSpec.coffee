@@ -1,17 +1,16 @@
 describe 'angular-servicestack > serviceStackRestConfig provider > ', () ->
  
 	defaultConfig = {
-		urlPrefix: "/api/",
+		urlPrefix: "",
 		maxRetries: 3,
-		maxWaitBetweenRetries: 4000,
-		unauthorizedFn: (response) -> 
-			return
+		maxDelayBetweenRetries: 4000,
+		unauthorizedFn: null
 	}
 
 	customConfig = {
 		urlPrefix: "/api/somethingelse",
 		maxRetries: 45,
-		maxWaitBetweenRetries: 9234
+		maxDelayBetweenRetries: 9234
 		unauthorizedFn: (response) ->
 			return
 	}
@@ -25,9 +24,9 @@ describe 'angular-servicestack > serviceStackRestConfig provider > ', () ->
 	it 'should have default config', inject (serviceStackRestConfig) ->
 		expect(serviceStackRestConfig.urlPrefix).toEqual(defaultConfig.urlPrefix)
 		expect(serviceStackRestConfig.maxRetries).toEqual(defaultConfig.maxRetries)
-		expect(serviceStackRestConfig.maxWaitBetweenRetries).toEqual(defaultConfig.maxWaitBetweenRetries)
+		expect(serviceStackRestConfig.maxDelayBetweenRetries).toEqual(defaultConfig.maxDelayBetweenRetries)
 		# TODO: figure out how to make the next test work
-		# expect(serviceStackRestConfig.unauthorizedFn).toBe(defaultConfig.unauthorizedFn)
+		expect(defaultConfig.unauthorizedFn).toBeNull()
 
 	it 'should have provided config', () ->
 		module (serviceStackRestConfigProvider) ->
@@ -38,6 +37,7 @@ describe 'angular-servicestack > serviceStackRestConfig provider > ', () ->
 		inject (serviceStackRestConfig) ->
 			expect(serviceStackRestConfig.urlPrefix).toEqual(customConfig.urlPrefix)
 			expect(serviceStackRestConfig.maxRetries).toEqual(customConfig.maxRetries)
-			expect(serviceStackRestConfig.maxWaitBetweenRetries).toEqual(customConfig.maxWaitBetweenRetries)
+			expect(serviceStackRestConfig.maxDelayBetweenRetries).toEqual(customConfig.maxDelayBetweenRetries)
+			expect(angular.isFunction serviceStackRestConfig.unauthorizedFn).toEqual(true)
 			# TODO: figure out how to make the next test work
 			# expect(serviceStackRestConfig.unauthorizedFn).toBe(customConfig.unauthorizedFn)
