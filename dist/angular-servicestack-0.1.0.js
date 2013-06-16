@@ -14,14 +14,14 @@
   module.provider('serviceStackRestConfig', function() {
     var restConfig;
     restConfig = {
-      urlPrefix: "/api/",
+      urlPrefix: "",
       maxRetries: 3,
-      maxWaitBetweenRetries: 4000,
-      unauthorizedFn: function(response) {}
+      maxDelayBetweenRetries: 4000,
+      unauthorizedFn: null
     };
     return {
       setRestConfig: function(newConfig) {
-        return restConfig = newConfig;
+        return angular.extend(restConfig, newConfig);
       },
       $get: function() {
         return restConfig;
@@ -30,7 +30,7 @@
   });
 
   module.factory('serviceStackRestClient', [
-    'serviceStackRestConfig', '$http', '$q', '$location', '$timeout', '$log', function(serviceStackRestConfig, $http, $q, $location, $timeout, $log) {
+    'serviceStackRestConfig', '$http', '$q', '$timeout', '$log', function(serviceStackRestConfig, $http, $q, $timeout, $log) {
       var RestClient, ServiceStackResponse;
       ServiceStackResponse = (function() {
         function ServiceStackResponse(response) {
@@ -217,7 +217,7 @@
           d.promise.then(null, function(response) {
             var sleepTime;
             if (response.isRetryable()) {
-              sleepTime = Math.min(Math.random() * (Math.pow(4, response.collisionCount() - 1) * 100), serviceStackRestConfig.maxWaitBetweenRetries);
+              sleepTime = Math.min(Math.random() * (Math.pow(4, response.collisionCount() - 1) * 100), serviceStackRestConfig.maxDelayBetweenRetries);
               return $timeout(function() {
                 var fn, retryAttempt, _i, _j, _k, _len, _len1, _len2;
                 retryAttempt = me.execute(response.getConfig());
