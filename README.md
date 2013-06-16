@@ -67,7 +67,7 @@ angular.module('angular-servicestack').
 		serviceStackRestConfigProvider.setRestConfig {
 			urlPrefix: "/api/",
 			maxRetries: 3,
-			maxWaitBetweenRetries: 4000,
+			maxDelayBetweenRetries: 4000,
 			unauthorizedFn: function(response) { 
 				continuePath = encodeURIComponent $location.path();
 				$location.path "/a/signin/#{ continuePath }";
@@ -98,7 +98,7 @@ Default: `3`
 
 Number of times that requests that return `500` or `503` HTTP status codes will be retired before failing and calling the `error` handler.
 
-#### maxWaitBetweenRetries
+#### maxDelayBetweenRetries
 Type: `Number`
 Default: `4000`
 
