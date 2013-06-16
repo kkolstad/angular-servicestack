@@ -110,8 +110,6 @@ Default: `null`
 
 This function will be executed when a `401` HTTP status code is return by a service call. If null, undefined or something other than a function any registered error handlers will be fired.
 
-### Usage Examples
-
 
 ##Links
 + ServiceStack - http://servicestack.net/
