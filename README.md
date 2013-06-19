@@ -68,7 +68,7 @@ angular.module('angular-servicestack').
 			urlPrefix: "/api/",
 			maxRetries: 3,
 			maxDelayBetweenRetries: 4000,
-			unauthorizedFn: function(response) { 
+			unauthorizedFn: function(response, $location) { 
 				continuePath = encodeURIComponent $location.path();
 				$location.path "/a/signin/#{ continuePath }";
 			}
