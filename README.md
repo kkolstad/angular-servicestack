@@ -14,7 +14,7 @@ Makes consuming your Service Stack REST API much easier, by doing the following:
 
 ####With angular-servicestack
 ```javascript
-serviceStackRestClient.put("/api/customers", { id: 4, name: "customer" }).
+serviceStackRestClient.put("/api/customer/4", { id: 4, name: "customer" }).
 	success(function(response) {
   	// do what you do
 		result = response.data;
@@ -32,7 +32,7 @@ serviceStackRestClient.put("/api/customers", { id: 4, name: "customer" }).
 
 ####Without angular-servicestack
 ```javascript
-$http.put("/api/customers", { id: 4, name: "customer" }).
+$http.put("/api/customer/4", { id: 4, name: "customer" }).
   success(function(data, status, headers, config) {
   	// do what you do
   	result = data;
