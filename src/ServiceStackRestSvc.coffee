@@ -18,7 +18,7 @@ module.
 
 # This module encapsulates all the functionality around making REST calls to the ServiceStack API
 module.
-	factory 'serviceStackRestClient', ['serviceStackRestConfig', '$http','$q', '$timeout', '$log', (serviceStackRestConfig, $http, $q, $timeout, $log) ->
+	factory 'serviceStackRestClient', ['serviceStackRestConfig', '$http','$q', '$timeout', '$location', '$log', (serviceStackRestConfig, $http, $q, $timeout, $location, $log) ->
 
 		# @success = true if success, false if not
 		# @statusCode = status code of the underlying REST request
@@ -181,7 +181,7 @@ module.
 					if response.isUnauthenticated()
 						if serviceStackRestConfig.unauthorizedFn? and angular.isFunction serviceStackRestConfig.unauthorizedFn
 							# execute the unauthorizedFn is one was supplied
-							serviceStackRestConfig.unauthorizedFn() 
+							serviceStackRestConfig.unauthorizedFn(response, $location) 
 						else
 							# if no unauthorizedFn was supplied, execute any registered error handlers
 							errorFn response if errorFn? and angular.isFunction errorFn

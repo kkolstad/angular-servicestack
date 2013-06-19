@@ -1,7 +1,7 @@
 /**
  * @name: angular-servicestack
  * @description: A Service Stack client for AngularJS
- * @version: v0.1.0 - 2013-06-15
+ * @version: v0.1.0 - 2013-06-19
  * @link: https://github.com/kkolstad/angular-servicestack
  * @author: Kenneth Kolstad
  * @license: MIT License, http://www.opensource.org/licenses/MIT
@@ -30,22 +30,22 @@
   });
 
   module.factory('serviceStackRestClient', [
-    'serviceStackRestConfig', '$http', '$q', '$timeout', '$log', function(serviceStackRestConfig, $http, $q, $timeout, $log) {
+    'serviceStackRestConfig', '$http', '$q', '$timeout', '$location', '$log', function(serviceStackRestConfig, $http, $q, $timeout, $location, $log) {
       var RestClient, ServiceStackResponse;
       ServiceStackResponse = (function() {
         function ServiceStackResponse(response) {
-          var _ref;
+          var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
           this.response = response;
           this.success = (200 <= (_ref = this.response.status) && _ref < 300);
           this.statusCode = this.response.status;
           if (this.success) {
             this.data = this.response.data;
           }
-          if (!this.success && (this.response != null) && (this.response.data != null)) {
-            this.error = this.response.data.responseStatus;
+          if (!this.success) {
+            this.error = (_ref1 = this.response) != null ? (_ref2 = _ref1.data) != null ? _ref2.responseStatus : void 0 : void 0;
           }
-          if (!this.success && (this.response != null) && (this.response.data != null) && (this.response.data.responseStatus != null) && (this.response.data.responseStatus.errors != null) && this.response.data.responseStatus.errors.length > 0) {
-            this.validationErrors = this.response.data.responseStatus.errors;
+          if (!this.success && ((_ref3 = this.response) != null ? (_ref4 = _ref3.data) != null ? (_ref5 = _ref4.responseStatus) != null ? (_ref6 = _ref5.errors) != null ? _ref6.length : void 0 : void 0 : void 0 : void 0) > 0) {
+            this.validationErrors = (_ref7 = this.response) != null ? (_ref8 = _ref7.data) != null ? (_ref9 = _ref8.responseStatus) != null ? _ref9.errors : void 0 : void 0 : void 0;
           }
           if (this.isRetryable()) {
             this.incrementCollisionCount();
@@ -53,11 +53,8 @@
         }
 
         ServiceStackResponse.prototype.collisionCount = function() {
-          if ((this.response.config != null) && (this.response.config.data != null)) {
-            return this.response.config.data._collisions || 0;
-          } else {
-            return 0;
-          }
+          var _ref, _ref1, _ref2;
+          return ((_ref = this.response) != null ? (_ref1 = _ref.config) != null ? (_ref2 = _ref1.data) != null ? _ref2._collisions : void 0 : void 0 : void 0) || 0;
         };
 
         ServiceStackResponse.prototype.getConfig = function() {
@@ -65,11 +62,13 @@
         };
 
         ServiceStackResponse.prototype.hasValidationError = function() {
-          return (this.validationErrors != null) && this.validationErrors.length > 0;
+          var _ref;
+          return ((_ref = this.validationErrors) != null ? _ref.length : void 0) > 0;
         };
 
         ServiceStackResponse.prototype.incrementCollisionCount = function() {
-          this.response.config.data = this.response.config.data || {};
+          var _ref, _ref1;
+          this.response.config.data = ((_ref = this.response) != null ? (_ref1 = _ref.config) != null ? _ref1.data : void 0 : void 0) || {};
           return this.response.config.data._collisions = this.collisionCount() + 1;
         };
 
@@ -206,7 +205,7 @@
           d.promise.then(null, function(response) {
             if (response.isUnauthenticated()) {
               if ((serviceStackRestConfig.unauthorizedFn != null) && angular.isFunction(serviceStackRestConfig.unauthorizedFn)) {
-                return serviceStackRestConfig.unauthorizedFn();
+                return serviceStackRestConfig.unauthorizedFn(response, $location);
               } else {
                 if ((errorFn != null) && angular.isFunction(errorFn)) {
                   return errorFn(response);

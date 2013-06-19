@@ -13,8 +13,9 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 			urlPrefix: "/api/",
 			maxRetries: 3,
 			maxWaitBetweenRetries: 4000,	# 4 seconds
-			unauthorizedFn: (response) ->
+			unauthorizedFn: (response, $location) ->
 				unauthorizedRequestCount++
+				expect($location).toBeDefined()
 		}
 		# inject the configuration for this test
 		serviceStackRestConfigProvider.setRestConfig restConfigForTheseTests
@@ -178,12 +179,17 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 			}
 		}
 
-		beforeEach inject (_$httpBackend_) ->
+		$location = null
+
+		beforeEach inject (_$httpBackend_, _$location_) ->
 			# setup $http mocks
-			$httpBackend = _$httpBackend_;
+			$httpBackend = _$httpBackend_
 			mockResponse response
+			$location = _$location_
 
 		it "should redirect to sign in path and not fire and handlers", () ->
+
+			expect($location).toBeDefined()
 
 			success = false
 			error = false
