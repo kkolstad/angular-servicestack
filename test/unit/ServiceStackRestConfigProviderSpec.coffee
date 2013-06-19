@@ -39,5 +39,7 @@ describe 'angular-servicestack > serviceStackRestConfig provider > ', () ->
 			expect(serviceStackRestConfig.maxRetries).toEqual(customConfig.maxRetries)
 			expect(serviceStackRestConfig.maxDelayBetweenRetries).toEqual(customConfig.maxDelayBetweenRetries)
 			expect(angular.isFunction serviceStackRestConfig.unauthorizedFn).toEqual(true)
-			# TODO: figure out how to make the next test work
-			# expect(serviceStackRestConfig.unauthorizedFn).toBe(customConfig.unauthorizedFn)
+
+			expect(serviceStackRestConfig.unauthorizedFn).toBeDefined()
+			expect(serviceStackRestConfig.unauthorizedFn.toString()).toEqual(customConfig.unauthorizedFn.toString())
+			expect(serviceStackRestConfig.unauthorizedFn).toEqual(customConfig.unauthorizedFn)
