@@ -32,16 +32,13 @@ module.
 				# set the http status code. see http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 				@statusCode = @response.status
 				@data = @response.data if @success
-				@error = @response.data.responseStatus if not @success and @response? and @response.data?
-				@validationErrors = @response.data.responseStatus.errors if not @success and @response? and @response.data? and @response.data.responseStatus? and @response.data.responseStatus.errors? and @response.data.responseStatus.errors.length > 0
+				@error = @response?.data?.responseStatus if not @success
+				@validationErrors = @response?.data?.responseStatus?.errors if not @success and @response?.data?.responseStatus?.errors?.length > 0
 				@incrementCollisionCount() if @isRetryable()
 
 			# returns the collision count of the response. the collision count is stored in config.data of the request so that is can be passed to subsequent calls
 			collisionCount: ->
-				if @response.config? and @response.config.data?
-					@response.config.data._collisions or 0
-				else
-					0
+				@response?.config?.data?._collisions or 0
 
 			# used when the request needs to be retried
 			getConfig: ->
@@ -49,11 +46,11 @@ module.
 
 			# will return true if the service returned validation error(s)
 			hasValidationError: ->
-				@validationErrors? and @validationErrors.length > 0
+				@validationErrors?.length > 0
 
 			# should only be called internally
 			incrementCollisionCount: () ->
-				@response.config.data = @response.config.data or {}
+				@response.config.data = @response?.config?.data or {}
 				@response.config.data._collisions = @collisionCount() + 1
 
 			# returns true if the request should be retried due to a recoverable server side error (500 - 599) and the maximum retry count has not been exceeded
