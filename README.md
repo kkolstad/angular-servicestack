@@ -3,9 +3,9 @@ Service Stack Client for AngularJS
 
 Makes consuming your Service Stack REST API much easier, by doing the following:
 
-1. Exposes three event handlers success, error and validation. Only one is fired for each request. Success is pretty straight forward. Error is fired when any unhandled error is encountered. Validation is fired when Service Stack returns validation errors (https://github.com/ServiceStack/ServiceStack/wiki/Validation).
-2. Service calls that return 401 call and unauthorized function that you provide when bootstrpping your AngularJS application. This can be used to automatically route the user to the login page and back after being authenticated.
-3. Service calls that return 500 or 503 will be retried a certain number of times (defined in ServiceStackRestConfig)
+1. Exposes three event handlers: success, error, validation. Only one is fired for each request. Success is pretty straight forward. Error is fired when any unhandled error is encountered. Validation is fired when Service Stack returns validation errors (https://github.com/ServiceStack/ServiceStack/wiki/Validation).
+2. Service calls that return 401 will swallow the error and call `unauthorizedFn` that you provide when bootstrpping your AngularJS application. This can be used to automatically route the user to the login page and back after being authenticated. If no `unauthorizedFn` is supplied the error handler will be fired.
+3. Retries services calls that return 500 or 503 a certain number of configurable times (defined in ServiceStackRestConfig)
 
 ##Assumptions
 1. Errors return an object with a ResponseStatus property, if you throw (not return) HttpError this is done for you.
@@ -96,7 +96,7 @@ the url that the request will be sent to is: `/api/customers/search`
 Type: `Number`
 Default: `3`
 
-Number of times that requests that return `500` or `503` HTTP status codes will be retired before failing and calling the `error` handler.
+Number of times that requests that return `500` or `503` HTTP status codes will be retried before failing and calling the `error` handler.
 
 #### maxDelayBetweenRetries
 Type: `Number`
