@@ -64,15 +64,15 @@ In your AngularJS application add this code, customize for your application:
 ```javascript
 angular.module('angular-servicestack').
 	config(function(serviceStackRestConfigProvider) {
-		serviceStackRestConfigProvider.setRestConfig {
+		serviceStackRestConfigProvider.setRestConfig({
 			urlPrefix: "/api/",
 			maxRetries: 3,
 			maxDelayBetweenRetries: 4000,
 			unauthorizedFn: function(response, $location) { 
-				continuePath = encodeURIComponent $location.path();
+				continuePath = encodeURIComponent($location.path());
 				$location.path "/a/signin/#{ continuePath }";
 			}
-		}
+		});
 	});
 ```
 
