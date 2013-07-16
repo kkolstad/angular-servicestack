@@ -1,7 +1,7 @@
 /**
  * @name: angular-servicestack
  * @description: A Service Stack client for AngularJS
- * @version: v0.1.0 - 2013-06-19
+ * @version: v0.2.0 - 2013-07-16
  * @link: https://github.com/kkolstad/angular-servicestack
  * @author: Kenneth Kolstad
  * @license: MIT License, http://www.opensource.org/licenses/MIT
@@ -50,6 +50,8 @@
           if (this.isRetryable()) {
             this.incrementCollisionCount();
           }
+          this.headers = this.response.headers;
+          this.config = this.response.config;
         }
 
         ServiceStackResponse.prototype.collisionCount = function() {
@@ -179,25 +181,25 @@
           });
           d.promise.success = function(fn) {
             successFn.push(fn);
-            d.promise.then(function(ServiceStackResponse) {
-              return fn(ServiceStackResponse);
+            d.promise.then(function(response) {
+              return fn(response, response.headers, response.config);
             });
             return d.promise;
           };
           d.promise.error = function(fn) {
             errorFn.push(fn);
-            d.promise.then(null, function(ServiceStackResponse) {
-              if (ServiceStackResponse.isUnhandledError() && !ServiceStackResponse.hasValidationError()) {
-                return fn(ServiceStackResponse);
+            d.promise.then(null, function(response) {
+              if (response.isUnhandledError() && !response.hasValidationError()) {
+                return fn(response, response.headers, response.config);
               }
             });
             return d.promise;
           };
           d.promise.validation = function(fn) {
             validationFn.push(fn);
-            d.promise.then(null, function(ServiceStackResponse) {
-              if (ServiceStackResponse.isUnhandledError() && ServiceStackResponse.hasValidationError()) {
-                return fn(ServiceStackResponse);
+            d.promise.then(null, function(response) {
+              if (response.isUnhandledError() && response.hasValidationError()) {
+                return fn(response, response.headers, response.config);
               }
             });
             return d.promise;

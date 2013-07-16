@@ -1,7 +1,7 @@
 {
   "name": "angular-servicestack",
   "description": "A Service Stack client for AngularJS",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Kenneth Kolstad",
   "homepage": "https://github.com/kkolstad/angular-servicestack",
   "license": "MIT",

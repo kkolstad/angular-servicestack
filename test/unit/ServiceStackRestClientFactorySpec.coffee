@@ -29,7 +29,7 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 
 	# helper function to mock the http request/response based on the above responses
 	mockResponse = (r) ->
-		$httpBackend.expectGET(r.url).respond () -> [r.code, r.data]
+		$httpBackend.expectGET(r.url).respond () -> [r.code, r.data, r.headers]
 
 	describe "Successful REST Call", () ->
 
@@ -37,6 +37,7 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 			code: 200
 			url: "/api/method/200"
 			data: { id: 2}
+			headers: { "response-header": "header" }
 		}
 
 		beforeEach inject (_$httpBackend_) ->
@@ -50,13 +51,21 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 			validation = false
 
 			ss.get(response.url)
-				.success (r) ->
+				.success (r, headers, config) ->
 					success = true
+
 					expect(r.success).toBe(true)
 					expect(r.statusCode).toEqual(response.code)
 					expect(r.data).toEqual(response.data)
 					expect(r.error).toBeUndefined()
 					expect(r.validationErrors).toBeUndefined()
+
+					expect(headers).toBeDefined()
+					expect(headers("response-header")).toBe("header")
+
+					expect(config).toBeDefined()
+					expect(config.url).toEqual(response.url)
+					expect(config.method).toEqual("GET")
 				.error (r) ->
 					error = true
 				.validation (r) ->
@@ -80,6 +89,7 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 					"errors":[]
 				}
 			}
+			headers: { "response-header": "header" }
 		}
 
 		beforeEach inject (_$httpBackend_) ->
@@ -95,13 +105,21 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 			ss.get(response.url)
 				.success (r) ->
 					success = true
-				.error (r) ->
+				.error (r, headers, config) ->
 					error = true
+
 					expect(r.success).toBe(false)
 					expect(r.statusCode).toEqual(response.code)
 					expect(r.data).toBeUndefined()
 					expect(r.error).toEqual(response.data.responseStatus)
 					expect(r.validationErrors).toBeUndefined()
+
+					expect(headers).toBeDefined()
+					expect(headers("response-header")).toBe("header")
+
+					expect(config).toBeDefined()
+					expect(config.url).toEqual(response.url)
+					expect(config.method).toEqual("GET")
 				.validation (r) ->
 					validation = true
 
@@ -134,6 +152,7 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 					]
 				}
 			}
+			headers: { "response-header": "header" }
 		}
 
 		beforeEach inject (_$httpBackend_) ->
@@ -151,13 +170,20 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 					success = true
 				.error (r) ->
 					error = true
-				.validation (r) ->
+				.validation (r, headers, config) ->
 					validation = true
 					expect(r.success).toBe(false)
 					expect(r.statusCode).toEqual(response.code)
 					expect(r.data).toBeUndefined()
 					expect(r.error).toEqual(response.data.responseStatus)
 					expect(r.validationErrors).toEqual(response.data.responseStatus.errors)
+
+					expect(headers).toBeDefined()
+					expect(headers("response-header")).toBe("header")
+
+					expect(config).toBeDefined()
+					expect(config.url).toEqual(response.url)
+					expect(config.method).toEqual("GET")
 
 			$httpBackend.flush()
 
@@ -177,6 +203,7 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 					"errors":[]
 				}
 			}
+			headers: { "response-header": "header" }
 		}
 
 		$location = null
@@ -187,7 +214,7 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 			mockResponse response
 			$location = _$location_
 
-		it "should redirect to sign in path and not fire and handlers", () ->
+		it "should redirect to sign in path and not fire any handlers", () ->
 
 			expect($location).toBeDefined()
 
@@ -228,6 +255,7 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 					"errors":[]
 				}
 			}
+			headers: { "response-header": "header" }
 		}
 
 		$timeout = null
@@ -250,19 +278,27 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 
 			$httpBackend.whenGET(response.url).respond (method, url, data) ->
 				httpRequestCount += 1
-				[response.code, response.data]
+				[response.code, response.data, response.headers]
 
 			# should fail silently the first 3 times then return an error
 			ss.get(response.url)
 				.success (r) ->
 					success = true
-				.error (r) ->
+				.error (r, headers, config) ->
 					error = true
+
 					expect(r.success).toBe(false)
 					expect(r.statusCode).toEqual(response.code)
 					expect(r.data).toBeUndefined()
 					expect(r.error).toEqual(response.data.responseStatus)
 					expect(r.validationErrors).toBeUndefined()
+
+					expect(headers).toBeDefined()
+					expect(headers("response-header")).toBe("header")
+
+					expect(config).toBeDefined()
+					expect(config.url).toEqual(response.url)
+					expect(config.method).toEqual("GET")
 				.validation (r) ->
 					validation = true
 
@@ -297,6 +333,7 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 			code: 200
 			url: "/api/method/200"
 			data: { id: 2}
+			headers: { "response-header": "header" }
 		}
 
 		retryResponse = {
@@ -309,6 +346,7 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 					"errors":[]
 				}
 			}
+			headers: { "response-header": "retryheader" }
 		}
 
 		$timeout = null
@@ -334,20 +372,27 @@ describe "angular-servicestack > serviceStackRestClient factory > ", () ->
 				httpRequestCount += 1
 				if httpRequestCount <= ssConfig.maxRetries
 					# before the last attempt, return an error
-					[retryResponse.code, retryResponse.data]
+					[retryResponse.code, retryResponse.data, retryResponse.headers]
 				else
 					# once the max retries have been exceeded return a success, this will happen on the last attempt
-					[successResponse.code, successResponse.data]
+					[successResponse.code, successResponse.data, successResponse.headers]
 
 			# should fail silently the first 3 times then return an error
 			ss.get(retryResponse.url)
-				.success (r) ->
+				.success (r, headers, config) ->
 					success = true
 					expect(r.success).toBe(true)
 					expect(r.statusCode).toEqual(successResponse.code)
 					expect(r.data).toEqual(successResponse.data)
 					expect(r.error).toBeUndefined()
 					expect(r.validationErrors).toBeUndefined()
+
+					expect(headers).toBeDefined()
+					expect(headers("response-header")).toBe("header")
+
+					expect(config).toBeDefined()
+					expect(config.url).toEqual(retryResponse.url)
+					expect(config.method).toEqual("GET")
 				.error (r) ->
 					error = true
 				.validation (r) ->

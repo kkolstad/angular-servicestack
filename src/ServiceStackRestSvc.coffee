@@ -35,6 +35,8 @@ module.
 				@error = @response?.data?.responseStatus if not @success
 				@validationErrors = @response?.data?.responseStatus?.errors if not @success and @response?.data?.responseStatus?.errors?.length > 0
 				@incrementCollisionCount() if @isRetryable()
+				@headers = @response.headers
+				@config = @response.config
 
 			# returns the collision count of the response. the collision count is stored in config.data of the request so that is can be passed to subsequent calls
 			collisionCount: ->
@@ -148,9 +150,9 @@ module.
 				d.promise.success = (fn) ->
 					# store the callback in case we need to retry the request
 					successFn.push(fn)
-					d.promise.then (ServiceStackResponse) ->
+					d.promise.then (response) ->
 						# execute success handler
-						fn ServiceStackResponse
+						fn response, response.headers, response.config
 					# return the promise so that other callbacks can be chained
 					d.promise
 
@@ -158,10 +160,10 @@ module.
 				d.promise.error = (fn) ->
 					# store the callback in case we need to retry the request
 					errorFn.push(fn)
-					d.promise.then null, (ServiceStackResponse) ->
-						if ServiceStackResponse.isUnhandledError() and not ServiceStackResponse.hasValidationError()
+					d.promise.then null, (response) ->
+						if response.isUnhandledError() and not response.hasValidationError()
 							# execute error handler
-							fn ServiceStackResponse
+							fn response, response.headers, response.config
 					# return the promise so that other callbacks can be chained
 					d.promise
 
@@ -169,10 +171,10 @@ module.
 				d.promise.validation = (fn) ->
 					# store the callback in case we need to retry the request
 					validationFn.push(fn)
-					d.promise.then null, (ServiceStackResponse) ->
-						if ServiceStackResponse.isUnhandledError() and ServiceStackResponse.hasValidationError()
+					d.promise.then null, (response) ->
+						if response.isUnhandledError() and response.hasValidationError()
 							# execute validation handler
-							fn ServiceStackResponse
+							fn response, response.headers, response.config
 					# return the promise so that other callbacks can be chained
 					d.promise
 
