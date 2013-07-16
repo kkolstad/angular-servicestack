@@ -15,16 +15,16 @@ Makes consuming your Service Stack REST API much easier, by doing the following:
 ####With angular-servicestack
 ```javascript
 serviceStackRestClient.put("/api/customer/4", { id: 4, name: "customer" }).
-	success(function(response) {
-  	// do what you do
+	success(function(response, headers, config) {
+		// do what you do
 		result = response.data;
 	}).
-	error(function(response) {
+	error(function(response, headers, config) {
 		// handle non validation error
 		errorCode = response.error.errorCode;
 		message = response.error.message;
 	}).
-	validation(function(response) {
+	validation(function(response, headers, config) {
 		// handle validation error
 		errors = response.validationErrors;
 	});
@@ -33,29 +33,29 @@ serviceStackRestClient.put("/api/customer/4", { id: 4, name: "customer" }).
 ####Without angular-servicestack
 ```javascript
 $http.put("/api/customer/4", { id: 4, name: "customer" }).
-  success(function(data, status, headers, config) {
-  	// do what you do
-  	result = data;
-  }).
-  error(function(data, status, headers, config) {
-  	if(status === 401) {
-  		// handle redirecting to the login page
-    } else if (status === 500 || status === 503) {
-    	// retry the call and eventually handle too many failures
-	  } else {
-	  	if(data !== null && 
-	  		data.responseStatus != null && 
-	  		data.responseStatus.errors != null && 
-	  		data.responseStatus.errors.length > 0)
-	  		// handle validation error
-	  		errors = data.responseStatus.errors;
-	  	} else {
-	  	// handle non validation error
-	  		errorCode = data.responseStatus.errorCode;
-	  		message = data.responseStatus.message;
-		  }
+	success(function(data, status, headers, config) {
+		// do what you do
+		result = data;
+	}).
+	error(function(data, status, headers, config) {
+		if(status === 401) {
+			// handle redirecting to the login page
+		} else if (status === 500 || status === 503) {
+			// retry the call and eventually handle too many failures
+		} else {
+			if(data !== null && 
+				data.responseStatus != null && 
+				data.responseStatus.errors != null && 
+				data.responseStatus.errors.length > 0)
+				// handle validation error
+				errors = data.responseStatus.errors;
+			} else {
+				// handle non validation error
+				errorCode = data.responseStatus.errorCode;
+				message = data.responseStatus.message;
+			}
 		}
-  }
+	}
 });
 ```
 
@@ -133,3 +133,11 @@ This function will be executed when a `401` HTTP status code is return by a serv
 ####To test
 1. After following "Node Installation Instructions" above, in a terminal/command prompt navigate to angular-servicestack/
 2. Execute: grunt test
+
+##Changelog
+
+### 0.2.0 (July 16, 2013)
+- Added headers and config arguments to the success, error and validation callbacks
+
+###0.1.0 (June 19, 2013)
+- Initial release
